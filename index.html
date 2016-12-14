@@ -7,11 +7,13 @@
     <meta name="description" content="Alexpandab.GitHub.io : ">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
 
-    <title>Alexpandab.GitHub.io</title>
+    <title>Alex Baird</title>
   </head>
 
-  <body>
+  <body onload="documentLoad()">
 
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
@@ -24,12 +26,12 @@
         </header>
           <nav>
             <ul>
-              <li onclick="selectItem">Works</li>
-              <li onclick="selectItem">Standard 1</li>
-              <li onclick="selectItem">Standard 2</li>
-              <li onclick="selectItem">Standard 3</li>
-              <li onclick="selectItem">Standard 4</li>
-              <li onclick="selectItem">Standard 5</li>
+              <li id="works" class="selectedTab" onclick="selectItem('works')">Works</li>
+              <li id="s1" onclick="selectItem('s1')">Standard 1</li>
+              <li id="s2" onclick="selectItem('s2')">Standard 2</li>
+              <li id="s3" onclick="selectItem('s3')">Standard 3</li>
+              <li id="s4" onclick="selectItem('s4')">Standard 4</li>
+              <li id="s5" onclick="selectItem('s5')">Standard 5</li>
             </ul>
           </nav>
     </div>
