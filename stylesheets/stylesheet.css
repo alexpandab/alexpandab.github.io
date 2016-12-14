@@ -59,7 +59,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin: 10px 0;
+  margin: 0px 0;
   font-weight: 700;
   color:#222222;
   font-family: 'Lucida Grande', 'Calibri', Helvetica, Arial, sans-serif;
@@ -336,6 +336,31 @@ nav li {
   border-radius: 7px 7px 0px 0px;
 }
 
+#worksBody, #s1Body, #s2Body, #s3Body, #s4Body, #s5Body {
+  position: fixed;
+  width: 660px;
+}
+
+#s1Body {
+  margin-left: 100%;
+}
+
+#s2Body {
+  margin-left: 100%;
+}
+
+#s3Body {
+  margin-left: 100%;
+}
+
+#s4Body {
+  margin-left: 100%;
+}
+
+#s5Body {
+  margin-left: 100%;
+}
+
 #downloads {
   position: absolute;
   width: 210px;
@@ -382,6 +407,7 @@ nav li {
 
 #main_content {
   padding-top: 40px;
+  padding-bottom: 400px;
 }
 
 #footer_wrap {
