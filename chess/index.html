@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			html, body, div, span, applet, object, iframe,
+			h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+			a, abbr, acronym, address, big, cite, code,
+			del, dfn, em, img, ins, kbd, q, s, samp,
+			small, strike, strong, sub, sup, tt, var,
+			b, u, i, center,
+			dl, dt, dd, ol, ul, li,
+			fieldset, form, label, legend,
+			table, caption, tbody, tfoot, thead, tr, th, td,
+			article, aside, canvas, details, embed, 
+			figure, figcaption, footer, header, hgroup, 
+			menu, nav, output, ruby, section, summary,
+			time, mark, audio, video {
+				margin: 0;
+				padding: 0;
+				border: 0;
+				font-size: 100%;
+				font: inherit;
+				vertical-align: baseline;
+			}
+			/* HTML5 display-role reset for older browsers */
+			article, aside, details, figcaption, figure, 
+			footer, header, hgroup, menu, nav, section {
+				display: block;
+			}
+			body {
+				line-height: 1;
+			}
+			ol, ul {
+				list-style: none;
+			}
+			blockquote, q {
+				quotes: none;
+			}
+			blockquote:before, blockquote:after,
+			q:before, q:after {
+				content: '';
+				content: none;
+			}
+			table {
+				border-collapse: collapse;
+				border-spacing: 0;
+			}
+			#chess {
+				margin-left: calc(50% - 402px);
+			}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	</head>
+	<body>
+		<canvas id="chess" width="800" height="900" style="border: 2px solid black" onLoad="theLoadFunction()">
+			<script>
+				//Initialize Variable
+			//
+
+				var c = document.getElementById("chess");
+				var ctx = c.getContext("2d");
+				var spriteMap = new Image;
+				spriteMap.src = 'chess_pieces.PNG';
+				var x = 0;
+				var y = 50;
+				var tileArray = new Array(8);
+				function Piece(typ, plyr) {
+					this.type = typ;
+					this.player = plyr;
+				}
+				function Tile(tcx, tcy, occ) {
+					this.tileCoordX = tcx;
+					this.tileCoordY = tcy;
+					this.occupy = occ;
+				}
+				var xPosition = 0;
+				var yPosition = 0;
+				var selectedTile = "";
+				var dead = new Array(2);
+				var moveLocation = "";
+				dead[0] = 0;
+				dead[1] = 0;
+				playerTurn = 1;
+
+				//When a piece is in the way, can't move past it; array of 8 for 8 directions (north, northeast, east, southeast, south, southwest, west, northwest), secondary directions have two directions
+
+				var blockMove = new Array(8);
+				blockMove[1] = new Array(2);
+				blockMove[3] = new Array(2);
+				blockMove[5] = new Array(2);
+				blockMove[7] = new Array(2);
+
+				function resetBlockMove() {
+					blockMove[0] = 0;
+					blockMove[1][0] = 7;
+					blockMove[1][1] = 0;
+					blockMove[2] = 7;
+					blockMove[3][0] = 7;
+					blockMove[3][1] = 7;
+					blockMove[4] = 7;
+					blockMove[5][0] = 0;
+					blockMove[5][1] = 7;
+					blockMove[6] = 0;
+					blockMove[7][0] = 0;
+					blockMove[7][1] = 0;
+				}
+
+				resetBlockMove();
+
+				//Draw the Board
+
+				ctx.fillStyle = "#228B22";
+				ctx.fillRect(0, 0, 800, 50);
+				ctx.fillRect(0, 850, 800, 50);
+
+				function drawBoard(){
+					ctx.fillStyle = "#aaa";
+
+					for(y;y<850;y=y+100){
+						if((y - 50) / 100 % 2 == 1){
+							x = 100;
+						}else {
+							x = 0;
+						}
+						for(x;x<820;x = x + 200){
+							ctx.fillRect(x, y, 100, 100);
+						}				
+					}
+					x=0;
+					y=50;
+				}
+
+				//Create Board makes the tile array
+
+				function createBoard() {
+					for(a=0;a<8;a++){
+						tileArray[a] = new Array(8);
+					}
+					console.log(tileArray);
+
+					for(ta1=0;ta1<8;ta1++){
+						for(ta2=0;ta2<8;ta2++){
+							if(ta1 % 2 == 0){
+								if(ta2 % 2 == 0){
+									tileArray[ta1][ta2] = new Tile(ta2, ta1, "");
+								}
+								else {
+									tileArray[ta1][ta2] = new Tile(ta2, ta1, "");
+								}
+							}
+							else {
+								if(ta2 % 2 == 1){
+									tileArray[ta1][ta2] = new Tile(ta2, ta1, "");
+								}
+								else {
+									tileArray[ta1][ta2] = new Tile(ta2, ta1, "");
+								}
+							}
+							console.log(tileArray[ta1][ta2]);
+						}
+					}
+				}
+
+				//Initialize Pieces places the pieces on the board.
+
+				function initializePieces() {
+					for(ip1=0;ip1<8;ip1++){
+						tileArray[1][ip1].occupy = new Piece("Pawn", 1);
+						tileArray[6][ip1].occupy = new Piece("Pawn", 2);
+					}
+					tileArray[0][0].occupy = new Piece("Rook", 1);
+					tileArray[0][1].occupy = new Piece("Knight", 1);
+					tileArray[0][2].occupy = new Piece("Bishop", 1);
+					tileArray[0][3].occupy = new Piece("Queen", 1);
+					tileArray[0][4].occupy = new Piece("King", 1);
+					tileArray[0][5].occupy = new Piece("Bishop", 1);
+					tileArray[0][6].occupy = new Piece("Knight", 1);
+					tileArray[0][7].occupy = new Piece("Rook", 1);
+					tileArray[7][0].occupy = new Piece("Rook", 2);
+					tileArray[7][1].occupy = new Piece("Knight", 2);
+					tileArray[7][2].occupy = new Piece("Bishop", 2);
+					tileArray[7][3].occupy = new Piece("Queen", 2);
+					tileArray[7][4].occupy = new Piece("King", 2);
+					tileArray[7][5].occupy = new Piece("Bishop", 2);
+					tileArray[7][6].occupy = new Piece("Knight", 2);
+					tileArray[7][7].occupy = new Piece("Rook", 2);
+				}
+
+				//Draws the pieces on the board.
+
+				function drawPieces() {
+					for(dp1=0;dp1<8;dp1++){
+						for(dp2=0;dp2<8;dp2++){
+							if(tileArray[dp1][dp2].occupy !== ""){
+								drawSprite(tileArray[dp1][dp2].occupy.type, tileArray[dp1][dp2].occupy.player, tileArray[dp1][dp2].tileCoordX * 100, tileArray[dp1][dp2].tileCoordY * 100 + 50, 100);
+							}
+						}
+					}
+				}
+
+				//Event Listener for click
+		
+				c.addEventListener("click", getClickPosition, false);
+
+				function getClickPosition(e) {
+  					xPosition = e.offsetX;
+    				yPosition = e.offsetY;
+    				console.log(xPosition, yPosition, Math.floor(xPosition / 100));
+
+    				//Select tile, can switch the selected tile by clicking on another piece of same player
+    				if(tileArray[Math.floor((yPosition - 50) / 100)][Math.floor(xPosition / 100)].occupy.player == playerTurn){
+	    				if(tileArray[Math.floor((yPosition - 50) / 100)][Math.floor(xPosition / 100)].occupy !== "" && (selectedTile == "" || selectedTile.occupy.player == tileArray[Math.floor((yPosition - 50) / 100)][Math.floor(xPosition / 100)].occupy.player)){
+		    				selectedTile = tileArray[Math.floor((yPosition - 50) / 100)][Math.floor(xPosition / 100)];
+		    				updateBoard();
+							showPieceMove();
+	    				}
+    				}
+
+    				//To move piece
+    				if(selectedTile !== tileArray[Math.floor((yPosition - 50) / 100)][Math.floor(xPosition / 100)] && selectedTile !== "") {
+    					moveLocation = tileArray[Math.floor((yPosition - 50) / 100)][Math.floor(xPosition / 100)];
+    					movePiece();
+    				}
+    				console.log(selectedTile, moveLocation);
+				}
+
+				function updateBoard() {
+					ctx.clearRect(0,50,800,800);
+					drawBoard();
+    				ctx.fillStyle = "#FFE57F";
+    				ctx.fillRect(selectedTile.tileCoordX * 100, selectedTile.tileCoordY * 100 + 50, 100, 100);
+					drawPieces();
+				}
+
+				//Function responsible for showing move options
+
+				function showPieceMove() {
+					ctx.strokeStyle = "#69F0AE";
+					ctx.lineWidth = 10;
+					resetBlockMove();
+					setBlocked();
+					for(mpy=0;mpy<8;mpy++){
+						for(mpx=0;mpx<8;mpx++){
+							ctx.beginPath();
+							if(checkMove(mpx, mpy) == true){
+								ctx.arc(tileArray[mpy][mpx].tileCoordX * 100 + 50,tileArray[mpy][mpx].tileCoordY * 100 + 100,35,0,2*Math.PI);
+							}
+							ctx.stroke();
+							ctx.closePath();
+						}
+					}
+				}
+
+				function drawSprite(type, player, placeX, placeY, dimension){
+					switch(type){
+						case("King"):
+							ctx.drawImage(spriteMap, 0, 333.33 * (player - 1), 2000/6, 333.33, placeX, placeY, dimension, dimension);
+						break;
+						case("Queen"):
+							ctx.drawImage(spriteMap, 2000/6, 333.33 * (player - 1), 2000/6, 333.33, placeX, placeY, dimension, dimension);
+						break;
+						case("Bishop"):
+							ctx.drawImage(spriteMap, 4000/6, 333.33 * (player - 1), 2000/6, 333.33, placeX, placeY, dimension, dimension);
+						break;
+						case("Knight"):
+							ctx.drawImage(spriteMap, 6000/6, 333.33 * (player - 1), 2000/6, 333.33, placeX, placeY, dimension, dimension);
+						break;
+						case("Rook"):
+							ctx.drawImage(spriteMap, 8000/6, 333.33 * (player - 1), 2000/6, 333.33, placeX, placeY, dimension, dimension);
+						break;
+						case("Pawn"):
+							ctx.drawImage(spriteMap, 10000/6, 333.33 * (player - 1), 2000/6, 333.33, placeX, placeY, dimension, dimension);
+						break;
+					}
+				}
+
+				function setBlocked(){
+					for(checkY=0;checkY<8;checkY++){
+						for(checkX=0;checkX<8;checkX++){
+							if(tileArray[checkY][checkX].occupy !== ""){
+								if(tileArray[checkY][checkX].tileCoordX == selectedTile.tileCoordX){
+									if(tileArray[checkY][checkX].tileCoordY < selectedTile.tileCoordY){
+										blockMove[0] = tileArray[checkY][checkX].tileCoordY;
+									}else if(tileArray[checkY][checkX].tileCoordY > selectedTile.tileCoordY){
+										if(tileArray[checkY][checkX].tileCoordY < blockMove[4]){
+											blockMove[4] = tileArray[checkY][checkX].tileCoordY;
+										}
+									}
+								}else if(tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordY){
+									if(tileArray[checkY][checkX].tileCoordX < selectedTile.tileCoordX){
+										blockMove[6] = tileArray[checkY][checkX].tileCoordX;
+									}else if(tileArray[checkY][checkX].tileCoordX > selectedTile.tileCoordX){
+										if(tileArray[checkY][checkX].tileCoordX < blockMove[2]){
+											blockMove[2] = tileArray[checkY][checkX].tileCoordX;
+										}
+									}
+								}
+								if(tileArray[checkY][checkX].tileCoordX + tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordX + selectedTile.tileCoordY){
+									if(tileArray[checkY][checkX].tileCoordY < selectedTile.tileCoordY){
+										blockMove[1][0] = tileArray[checkY][checkX].tileCoordX;
+										blockMove[1][1] = tileArray[checkY][checkX].tileCoordY;
+									}else if(tileArray[checkY][checkX].tileCoordY > selectedTile.tileCoordY){
+										if(blockMove[5][0] < tileArray[checkY][checkX].tileCoordX && blockMove[5][1] > tileArray[checkY][checkX].tileCoordY){
+											blockMove[5][0] = tileArray[checkY][checkX].tileCoordX;
+											blockMove[5][1] = tileArray[checkY][checkX].tileCoordY;
+										}
+									}
+								}else if(tileArray[checkY][checkX].tileCoordX - tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordX - selectedTile.tileCoordY){
+									if(tileArray[checkY][checkX].tileCoordY < selectedTile.tileCoordY){
+										blockMove[7][0] = tileArray[checkY][checkX].tileCoordX;
+										blockMove[7][1] = tileArray[checkY][checkX].tileCoordY;
+									}else if(tileArray[checkY][checkX].tileCoordY > selectedTile.tileCoordY){
+										if(blockMove[3][0] > tileArray[checkY][checkX].tileCoordX && blockMove[3][1] > tileArray[checkY][checkX].tileCoordY){
+											blockMove[3][0] = tileArray[checkY][checkX].tileCoordX;
+											blockMove[3][1] = tileArray[checkY][checkX].tileCoordY;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				//Returns boolean for conditions to move met
+
+				function checkMove(checkX, checkY){
+					switch(selectedTile.occupy.type){
+						case("King"):
+							return (((tileArray[checkY][checkX].tileCoordX + 1 == selectedTile.tileCoordX || tileArray[checkY][checkX].tileCoordX - 1 == selectedTile.tileCoordX) && (tileArray[checkY][checkX].tileCoordY + 1 == selectedTile.tileCoordY || tileArray[checkY][checkX].tileCoordY - 1 == selectedTile.tileCoordY)) || ((tileArray[checkY][checkX].tileCoordX == selectedTile.tileCoordX + 1 || tileArray[checkY][checkX].tileCoordX == selectedTile.tileCoordX - 1) && tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordY) || ((tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordY + 1 || tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordY - 1) && tileArray[checkY][checkX].tileCoordX == selectedTile.tileCoordX)) && selectedTile.occupy.player !== tileArray[checkY][checkX].occupy.player;
+						break;
+						case("Queen"):
+							if(((tileArray[checkY][checkX].tileCoordX + tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordX + selectedTile.tileCoordY && tileArray[checkY][checkX].tileCoordX <= blockMove[1][0] && tileArray[checkY][checkX].tileCoordY >= blockMove[1][1] && tileArray[checkY][checkX].tileCoordX >= blockMove[5][0] && tileArray[checkY][checkX].tileCoordY <= blockMove[5][1]) || (tileArray[checkY][checkX].tileCoordX - tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordX - selectedTile.tileCoordY && tileArray[checkY][checkX].tileCoordX <= blockMove[3][0] && tileArray[checkY][checkX].tileCoordY <= blockMove[3][1] && tileArray[checkY][checkX].tileCoordX >= blockMove[7][0] && tileArray[checkY][checkX].tileCoordY >= blockMove[7][1])) || (tileArray[checkY][checkX].tileCoordY <= blockMove[4] && tileArray[checkY][checkX].tileCoordY >= blockMove[0] && tileArray[checkY][checkX].tileCoordX <= blockMove[2] && tileArray[checkY][checkX].tileCoordX >= blockMove[6])){
+								return (tileArray[checkY][checkX].tileCoordX == selectedTile.tileCoordX || tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordY || tileArray[checkY][checkX].tileCoordX + tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordX + selectedTile.tileCoordY || tileArray[checkY][checkX].tileCoordX - tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordX - selectedTile.tileCoordY) && selectedTile.occupy.player !== tileArray[checkY][checkX].occupy.player;
+							}
+						break;
+						case("Bishop"):
+							if((tileArray[checkY][checkX].tileCoordX + tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordX + selectedTile.tileCoordY && tileArray[checkY][checkX].tileCoordX <= blockMove[1][0] && tileArray[checkY][checkX].tileCoordY >= blockMove[1][1] && tileArray[checkY][checkX].tileCoordX >= blockMove[5][0] && tileArray[checkY][checkX].tileCoordY <= blockMove[5][1]) || (tileArray[checkY][checkX].tileCoordX - tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordX - selectedTile.tileCoordY && tileArray[checkY][checkX].tileCoordX <= blockMove[3][0] && tileArray[checkY][checkX].tileCoordY <= blockMove[3][1] && tileArray[checkY][checkX].tileCoordX >= blockMove[7][0] && tileArray[checkY][checkX].tileCoordY >= blockMove[7][1])){
+								return (tileArray[checkY][checkX].tileCoordX + tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordX + selectedTile.tileCoordY || tileArray[checkY][checkX].tileCoordX - tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordX - selectedTile.tileCoordY) && tileArray[checkY][checkX] !== selectedTile && tileArray[checkY][checkX].occupy.player !== selectedTile.occupy.player;
+							}else{
+								return false;
+							}
+						break;
+						case("Knight"):
+							return (((selectedTile.tileCoordX == tileArray[checkY][checkX].tileCoordX + 2 || selectedTile.tileCoordX == tileArray[checkY][checkX].tileCoordX - 2) && (selectedTile.tileCoordY - 1 == tileArray[checkY][checkX].tileCoordY || selectedTile.tileCoordY + 1 == tileArray[checkY][checkX].tileCoordY)) || ((selectedTile.tileCoordX == tileArray[checkY][checkX].tileCoordX + 1 || selectedTile.tileCoordX == tileArray[checkY][checkX].tileCoordX - 1) && (selectedTile.tileCoordY + 2 == tileArray[checkY][checkX].tileCoordY || selectedTile.tileCoordY - 2 == tileArray[checkY][checkX].tileCoordY))) && tileArray[checkY][checkX].occupy.player !== selectedTile.occupy.player;
+						break;
+						case("Rook"):
+							if(tileArray[checkY][checkX].tileCoordY <= blockMove[4] && tileArray[checkY][checkX].tileCoordY >= blockMove[0] && tileArray[checkY][checkX].tileCoordX <= blockMove[2] && tileArray[checkY][checkX].tileCoordX >= blockMove[6]){
+								return (tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordY || tileArray[checkY][checkX].tileCoordX == selectedTile.tileCoordX) && tileArray[checkY][checkX].occupy.player !== selectedTile.occupy.player;
+							}
+						break;
+						case("Pawn"):
+							if(tileArray[checkY][checkX].tileCoordY <= blockMove[4] && tileArray[checkY][checkX].tileCoordY >= blockMove[0]){
+								//First move, two steps forward
+								if(selectedTile.tileCoordY == 5 * (selectedTile.occupy.player - 1) + 1 && tileArray[checkY][checkX].occupy == ""){
+									return (tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordY - 4 * (selectedTile.occupy.player - 1) + 2 && tileArray[checkY][checkX].tileCoordX == selectedTile.tileCoordX && tileArray[checkY][checkX].occupy.player !== "") || (tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordY - 2 * (selectedTile.occupy.player - 1) + 1 && tileArray[checkY][checkX].tileCoordX == selectedTile.tileCoordX && tileArray[checkY][checkX].occupy.player !== selectedTile.occupy.player);
+								}
+								//Take piece diagonal
+								if((selectedTile.tileCoordX == tileArray[checkY][checkX].tileCoordX + 1 || selectedTile.tileCoordX == tileArray[checkY][checkX].tileCoordX - 1)&&(tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordY - 2 * (selectedTile.occupy.player - 1) + 1)){
+									return tileArray[checkY][checkX].occupy !== "" && tileArray[checkY][checkX].occupy.player !== selectedTile.occupy.player;
+								}
+								//Normal one step
+								return tileArray[checkY][checkX].tileCoordY == selectedTile.tileCoordY - 2 * (selectedTile.occupy.player - 1) + 1 && tileArray[checkY][checkX].tileCoordX == selectedTile.tileCoordX && tileArray[checkY][checkX].occupy == "";
+							}else{
+								return false;
+							}
+						break;
+					}
+				}
+
+				//Deletes a piece
+
+				function deletePiece(deleteTile){
+					drawSprite(deleteTile.occupy.type, deleteTile.occupy.player, dead[deleteTile.occupy.player - 1], 850 * (2 - deleteTile.occupy.player), 50);
+					if(deleteTile.occupy.player == 1){
+						dead[0] += 50;
+					}else if(deleteTile.occupy.player == 2){
+						dead[1] += 50;
+					}
+					if(deleteTile.occupy.type == 'King'){
+						if(deleteTile.occupy.player == 1){
+							alert('Player two has won!');
+						}else if(deleteTile.occupy.player == 2){
+							alert('Player one has won!');
+						}
+					}
+					deleteTile.occupy = "";
+					updateBoard();
+				}
+
+				//Moves a piece
+
+				function movePiece(){
+					console.log(selectedTile.occupy, moveLocation.occupy);
+					if(checkMove(moveLocation.tileCoordX, moveLocation.tileCoordY) == true){
+						if(moveLocation.occupy.player !== selectedTile.occupy.player){
+							deletePiece(moveLocation);
+						}
+						moveLocation.occupy = selectedTile.occupy;
+						selectedTile.occupy = "";
+						selectedTile = "";
+						updateBoard();
+						if(playerTurn == 1){
+							playerTurn = 2;
+						}else if(playerTurn == 2){
+							playerTurn = 1;
+						}
+					}
+					moveLocation = "";
+				}
+
+				//Starts the game
+
+				spriteMap.onload = function(){
+					drawBoard();
+					createBoard();
+					initializePieces();
+					drawPieces();
+				}
+			</script>
+		</canvas>
+	</body>
+</html>

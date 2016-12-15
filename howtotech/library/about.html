@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link style="text/css" rel="stylesheet" href="../style.css"/>
+		<link style="image/png" rel="icon" href="../images/logo.png" alt="how-to-tech logo"/>
+		<link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+		<title>How To Tech</title>
+	</head>
+	<body>
+		<div id="header">
+			<img src="../images/logo.png"/>
+			<p>How To Tech</p>
+		</div>
+		<div id="nav">
+			<ul>
+				<a href="../index.html" class="blue"><li>Home</li></a>
+				<a href="mediapage.html" class="green"><li>Media Arts</li></a>
+				<a href="programpage.html" class="yellow"><li>Programming</li></a>
+				<a href="videogamepage.html" class="red"><li>Video Games</li></a>
+				<a href="#" class="purple-active"><li>About Us</li></a>
+			</ul>
+		</div>
+		<div id="main">
+			<p class="mainTitle">Got questions? Ask Us Here!</p>
+			<p class="mainDesc">How To Tech is a non-profit organization dedicated to video tutorials on programming, Adobe products, Minecraft and more. Our staff is a class of sophomores at Meridian Technical Charter High School, learning how to make it on our own in the world of Design and Development.</p>
+		</div>
+		<div id="form">
+
+				<form name="contactForm" action="../form.php">
+                	<p><label>Your Full Name: </label><input type="text" name="fullName" id="fullName" class="input_text" placeholder="Insert your name" required></p>
+                    <p><label>Your E-Mail Address: </label><input type="email" id="emailAddress" name="emailAddress" class="input_text" placeholder="email.sample@gmail.com" required></p>
+                    <p><label>Your Phone Number: </label><input type="tel" id="phoneNumber" name="phoneNumber" class="input_text" placeholder="(333) 333-3333"></p>
+                    <p><label>Your Message: </label><textarea id="comments" name="comments" class="input_text" placeholder="Insert your message"></textarea></p>
+                    <p><input type="submit" id="submit"></p>
+                    <input name="honeypot" id="honeypot">
+                </form>
+		</div>
+	</body>
+</html>

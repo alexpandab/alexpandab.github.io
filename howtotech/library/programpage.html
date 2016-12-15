@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link style="text/css" rel="stylesheet" href="../style.css"/>
+		<link style="image/png" rel="icon" href="../images/logo.png" alt="how-to-tech logo"/>
+		<link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+		<title>How To Tech</title>
+	</head>
+	<body>
+		<div id="header">
+			<img src="../images/logo.png"/>
+			<p>How To Tech</p>
+		</div>
+		<div id="nav">
+			<ul>
+				<a href="../index.html" class="blue"><li>Home</li></a>
+				<a href="mediapage.html" class="green"><li>Media Arts</li></a>
+				<a href="#" class="yellow-active"><li>Programming</li></a>
+				<a href="videogamepage.html" class="red"><li>Video Games</li></a>
+				<a href="about.html" class="purple"><li>About Us</li></a>
+			</ul>
+		</div>
+		<div id="main">
+			<p class="mainTitle">Programming Tutorials</p>
+			<p class="mainDesc">Learn the basics of coding, from HTML to PyQuery, and learn how to apply those skills.</p>
+		</div>
+			<select id="programMenu">
+ 				<option value="default">Filter by Topic</option>
+ 				<option value="html">HTML-CSS</option>
+  				<option value="javascript">JavaScript</option>
+ 				<option value="pyquery">PyQuery</option>
+			</select>
+		<table id="videos" class="videos-yellow">
+			<tr>
+				<td class="html-css">
+					<video width="100%" height="200px" controls="controls" poster="../images/program1.png">
+						<source src="http://erickson.smtchs.org/tutorials/BasicHTML.mp4" type="video/mp4"/>
+						Your browser is out of date.
+					</video><p>Basic HTML</p><p>Nathan Montgomery</p>
+				</td>
+				<td class="html-css">
+					<video width="100%" height="200px" controls="controls" poster="../images/program2.png">
+						<source src="http://erickson.smtchs.org/tutorials/DreamweaverHTMLCSS.mp4" type="video/mp4"/>
+						Your browser is out of date.
+					</video><p>HTML and CSS in Dreamweaver</p><p>Mason Porter</p>
+				</td>
+				<td class="html-css">
+					<video width="100%" height="200px" controls="controls" poster="../images/program3.png">
+						<source src="http://erickson.smtchs.org/tutorials/IllustratorPenTool.mp4" type="video/mp4"/>
+						Your browser is out of date.
+					</video><p>Intro to HTML</p><p>Ryan Harper</p>
+				</td>
+				<td class="javascript">
+					<video width="100%" height="200px" controls="controls" poster="../images/program4.png">
+						<source src="http://erickson.smtchs.org/tutorials/KhanAcademyJavaScript.mp4" type="video/mp4"/>
+						Your browser is out of date.
+					</video><p>Making an Drawing Program</p><p>Vanse Harris</p>
+				</td>
+			</tr>
+			<tr>
+				<td class="pyquery">
+					<video width="100%" height="200px" controls="controls" poster="../images/program5.png">
+						<source src="http://erickson.smtchs.org/tutorials/PyQuery.mp4" type="video/mp4"/>
+						Your browser is out of date.
+					</video><p>PyQuery</p><p>Chris Jackson</p>
+				</td>
+			</tr>
+		</table>
+		<script src="../script.js"></script>
+	</body>
+</html>
