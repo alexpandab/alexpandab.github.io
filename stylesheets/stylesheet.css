@@ -361,6 +361,27 @@ nav li {
   margin-left: 100%;
 }
 
+#bodyTitle {
+  line-height: 50px;
+}
+
+.bodyLists {
+  list-style: none;
+}
+
+.bodyLists li {
+  text-align: center;
+  width: 60px;
+  padding: 5px 0px 5px 0px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.bodySelectTab {
+  background-color: #ddd;
+  border-radius: 3px;
+}
+
 #downloads {
   position: absolute;
   width: 210px;
